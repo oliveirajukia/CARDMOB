@@ -1,15 +1,12 @@
 import { useState } from 'react'
-import './App.css'
-
-function Counter() {
-  const [count, setCount] = useState(0)
+import '../App.css'
 
 function Counter({title, initial = 0}) {
-  const [count, setCount] = useState(Number(ini))}
+  const [count, setCount] = useState(Number(initial))
 
   return (
     <>
-       <h1>{title}</h1>
+     <h1>{title}</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
@@ -18,6 +15,5 @@ function Counter({title, initial = 0}) {
     </>
   )
 }
-
 
 export default Counter
