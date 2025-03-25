@@ -24,10 +24,13 @@ const addTodo = () => {
                 todo.id == editingId ? {...todo, text: editingText} : todo
             )
         );
+
+       const cancelEditing = () => {
         setEditingId(null);
         setEditingText("");
     }
-
+    }
+    
     // Delete
     const deleteTodo = (id) => {
         setTodo(todos.filter((todo) => todo.id !== id));
@@ -54,6 +57,7 @@ const addTodo = () => {
                                     onChange={(event) => setEditingText(event.target.value)}
                                 />
                                 <button onClick={saveEdit}>Salvar</button>
+                                <a href="#" onClick={cancelEditing}>Cancelar</a>
                             </>
                         ) : (
                             <>
