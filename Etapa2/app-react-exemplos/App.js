@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button ,Image, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Button ,Image, TextInput, FlatList } from 'react-native';
 
 export default function App() {
   const [counter, setCounter] = useState(0);
@@ -19,19 +19,70 @@ const [editItemText, setEditItemText] = useState('');
     setCounter(counter - 1);
   };
 
-  const addItem = () => {
-    if (text.trim() === '') {
-      return;
+// CREATE
+
+
+const addItem = () => {
+  if (text.trim() === '') {
+    return;
+  }
+  const newItem = {
+    id: Math.random().toString(),
+    text: text.trim()
+  }
+  setItems([...items, newItem]);
+  setText('');
+  console.log(items);
+}
+
+// update
+const updateItem = (id) => {
+  setItems( items.map( item => {
+    if (item.id === id) {
+      return { ...item, text: editItemText}
     }
-    const newItem = {
-      id: Math.random().toString(),
-      text: text.trim()
-    }
-    setItems([...items, newItem]);
-    setText('');
-    console.log(items);
+    return item;
+  }) 
+);
+  setEditItemId(null);
+  setEditItemText('');
+}
+
+// delete
+const deleteItem = (id) => {
+  setItems(items.filter(item => item.id !== id));
+}
+
+// read -> um único item ou uma lista de itens
+const renderItem = ({item}) => {
+  if (item.id !== editItemId) {
+    return(
+      <View style={styles.item}>
+        <Text style={styles.itemText}>{item.text}</Text>
+        <View style={styles.buttons}>
+          <Button title='Edit' onPress={() => {setEditItemId(item.id)}}></Button>
+          <Button title='Delete' onPress={() => {deleteItem(item.id)}}  />   
+        </View>
+        </View>
+    )
+  }else{
+    // esta sendo editado
+    return (
+      <View style={styles.item}>
+        <TextInput
+        style={styles.editInput}
+        onChangeText={setEditItemText}
+        value={editItemText}
+        autoFocus
+        />
+        <Button title='Update' onPress={() => updateItem(item.id)}></Button>
+      </View>
+    );
   }
 
+}
+
+  
   return (
     <View style={styles.container}>
       <TextInput
@@ -44,18 +95,24 @@ const [editItemText, setEditItemText] = useState('');
         title='Add Item'
         onPress={addItem}
       />
+      <FlatList
+        data={items}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        style={styles.list}
+        />
       <Text style={styles.text}>Olá App React Native - Atualiza!</Text>
       <Image 
         source={{uri: "https://picsum.photos/200"}}
         style={{width: 200, height: 200}}
       />
       <StatusBar style="auto" />
-      <Text style={styles.text}>Counter: {counter}</Text>
+      {/* <Text style={styles.text}>Counter: {counter}</Text>
 
       <View style={styles.buttonContainer}>
         <Button title='Increment' onPress={incrementCounter} />
         <Button title='Decrement' onPress={decrementCounter} />
-      </View>
+      </View> */}
     </View>
   );
 }
@@ -63,14 +120,48 @@ const [editItemText, setEditItemText] = useState('');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: "#f0ddee"
   },
   text: {
     fontSize: 24,
   },
   buttonContainer: {
     flexDirection: 'row'
+  },
+  input: {
+    height: 40,
+    backgroundColor: "#CBC3E3",
+    borderColor: 'black',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  list: {
+    marginTop: 20,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
+  },
+  itemText: {
+    flex: 1,
+    marginRight: 10,
+  },
+  buttons: {
+    flexDirection: 'row',
+  },
+  editInput: {
+    flex: 1,
+    marginRight: 10,
+    borderColor: 'pink',
+    borderWidth: 1,
+    paddingHorizontal: 10,
   }
+
 });
