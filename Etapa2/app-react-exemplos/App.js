@@ -9,55 +9,38 @@ export default function App() {
 return (
   <View style={styles.container}>
     <List />
+      <View style={styles.purplebox}></View>
+      <View style={styles.bluebox}></View>
+      <View style={styles.pinkbox}></View>
      </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#f0ddee"
+   flexDirection: 'column',
+   justifyContent: 'space-between',
+   alignItems: 'center',
+   backgroundColor: '#E6E6FA',
+   height: 600,
+   marginTop: 150,
   },
-  text: {
-    fontSize: 24,
-  },
-  buttonContainer: {
-    flexDirection: 'row'
-  },
-  input: {
-    height: 40,
-    backgroundColor: "#CBC3E3",
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  list: {
-    marginTop: 20,
-  },
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-    padding: 10,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 5,
-  },
-  itemText: {
-    flex: 1,
-    marginRight: 10,
-  },
-  buttons: {
-    flexDirection: 'row',
-  },
-  editInput: {
-    flex: 1,
-    marginRight: 10,
-    borderColor: 'pink',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-  }
+purplebox: {
+  width: 100,
+  height: 100,
+  backgroundColor: '#4b204b',
+  borderRadius: 50,
+},
+bluebox: {
+  width: 100,
+  height: 100,
+  backgroundColor: '#191970'
+},
+pinkbox: {
+  width: 100,
+  height: 100,
+  backgroundColor: '#f17ea1'
+}
+
 
 });
