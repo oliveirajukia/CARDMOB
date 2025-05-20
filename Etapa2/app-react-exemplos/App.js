@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Image, 
-} from 'react-native';
+import React, {useState} from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import Inputs from './components/Inputs';
 
+import ScrollViewExample from './components/ScrollViewExample';
 export default function App() {
 
-  return (
-    <View style={styles.container}>
-      <Inputs />
-    </View>
-  )
-}
 
+    return (
+          <View style={styles.container}>
+         <ScrollViewExample />
+      </View>
+    )
+  }
+ 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: 'pink',
     height: 600,
     marginTop: 150,
-  }
+  },
+
+
 });
