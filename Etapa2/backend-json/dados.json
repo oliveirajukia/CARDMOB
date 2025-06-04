@@ -60,5 +60,17 @@
       "text": "grgr",
       "id": "64e5"
     }
+  ],
+  "compras": [
+    {
+      "id": "c74a",
+      "item": "uva",
+      "quantidade": 45
+    },
+    {
+      "id": "ec19",
+      "item": "ovo",
+      "quantidade": 49
+    }
   ]
 }

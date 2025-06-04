@@ -1,236 +1,175 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button ,Image, TextInput, FlatList, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, FlatList, Button, Alert } from 'react-native';
 
-//indicar o endereço backend  
 const BASE_URL = 'http://10.81.205.22:3000';
 
+export default function App5() {
+  const [compras, setCompras] = useState([]);
+  const [item, setItem] = useState('');
+  const [quantidade, setQuantidade] = useState('');
+  const [editId, setEditId] = useState(null);
+  const [editItem, setEditItem] = useState('');
+  const [editQuantidade, setEditQuantidade] = useState('');
 
-export default function App() {
-  // excluir tudo que tem relação com counter, pois não usar
-  /// crud em memória
-
-const [items, setItems] = useState([]);
-const [text, setText] = useState('');
-const [editItemId, setEditItemId] = useState(null);
-const [editItemText, setEditItemText] = useState('');
-
-// loading ...efeito de carregando...
-const [loading, setLoading] = useState(false);
-
-// Buscar tudo
-const fetchItems = async () => {
-  setLoading(true);
-  try {
-    //executa o que precisa, se der erro entra no catch
-    const response = await fetch (`${BASE_URL}/items`);
-    const data = await response.json();
-    console.log(JSON.stringify(data)); //debug
-    setItems(data);
-
-  }catch (error) {
-    //quando ocorre algum erro
-    console.error('Error fetching items:', error)
-  }finally{
-    setLoading(false);
-  }
-} 
-
-useEffect(() => {
-  fetchItems();
-}, [])
-
-// CREATE
-
-const addItem = async () => {
-  if (text.trim() === '') {
-    return;
-  }
-  try {
-    const response = await fetch(`${BASE_URL}/items`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'applicattion/json'
-      },
-      body: JSON.stringify({text: text.trim()}),
-    });
-    if (response.ok) {
-      await fetchItems();
-      setText('');
+  const fetchCompras = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/compras`);
+      const data = await response.json();
+      setCompras(data);
+    } catch (error) {
+      console.error('Erro ao buscar compras:', error);
     }
-  else {
-    console.error('Failed to add item:', response.status);
-  }
-} 
-  catch (error) {
-    console.error('Error adding item:', error);
-  }
+  };
 
-}
+  useEffect(() => {
+    fetchCompras();
+  }, []);
 
-// update
-const updateItem = async (id) => {
-  try {
-    const response = await fetch(`${BASE_URL}/items/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ text: editItemText }),
-    });
-
-    if (response.ok) {
-      await fetchItems();
-      setEditItemId(null);
-      setEditItemText('');
-    } else {
-      console.error('Failed to update item:', response.status);
+  const addCompra = async () => {
+    if (!item.trim() || !quantidade.trim()) return;
+    try {
+      await fetch(`${BASE_URL}/compras`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item: item.trim(), quantidade: parseInt(quantidade) }),
+      });
+      setItem('');
+      setQuantidade('');
+      fetchCompras();
+    } catch (error) {
+      console.error('Erro ao adicionar compra:', error);
     }
-  } catch (error) {
-    console.error('Error updating item:', error);
-  }
-};
+  };
 
-// delete
-const deleteItem = async (id) => {
-  Alert.alert(
-    'Confirm Delete',
-    'Are you sure you want to delete this item ?',
-    [
-      { text:'Cancel',style: 'cancel' },
+  const updateCompra = async (id) => {
+    try {
+      await fetch(`${BASE_URL}/compras/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item: editItem, quantidade: parseInt(editQuantidade) }),
+      });
+      setEditId(null);
+      setEditItem('');
+      setEditQuantidade('');
+      fetchCompras();
+    } catch (error) {
+      console.error('Erro ao atualizar:', error);
+    }
+  };
+
+  const deleteCompra = async (id) => {
+    Alert.alert('Confirmar exclusão', 'Deseja excluir este item?', [
+      { text: 'Cancelar' },
       {
-        text: 'Delete',
+        text: 'Excluir',
         onPress: async () => {
           try {
-            const response = await fetch(`${BASE_URL}/items/${id}`, {
-              method: 'DELETE'
-            });
-            if (response.ok) {
-              await fetchItems();
-            }
-            else {
-              console.error('Failed to delete item:', response.status);
-            }
+            await fetch(`${BASE_URL}/compras/${id}`, { method: 'DELETE' });
+            fetchCompras();
+          } catch (error) {
+            console.error('Erro ao excluir:', error);
           }
-          catch (error) {
-            console.error('Error deleting item:', error);
-          }
-        },
+        }
       }
-    ],
-    { cancelable: true }
-  );
-};
+    ]);
+  };
 
-// read -> um único item ou uma lista de itens
-const renderItem = ({item}) => {
-  if (item.id !== editItemId) {
-    return(
-      <View style={styles.item}>
-        <Text style={styles.itemText}>{item.text}</Text>
-        <View style={styles.buttons}>
-          <Button title='Edit' onPress={() => {setEditItemId(item.id)}}></Button>
-          <Button title='Delete' onPress={() => {deleteItem(item.id)}}  />   
+  const renderItem = ({ item: compra }) => {
+    if (compra.id !== editId) {
+      return (
+        <View style={styles.item}>
+          <Text style={styles.itemText}>{compra.item} - {compra.quantidade} und</Text>
+          <View style={styles.buttons}>
+            <Button title="Editar" onPress={() => {
+              setEditId(compra.id);
+              setEditItem(compra.item);
+              setEditQuantidade(String(compra.quantidade));
+            }} />
+            <Button title="Excluir" onPress={() => deleteCompra(compra.id)} />
+          </View>
         </View>
+      );
+    } else {
+      return (
+        <View style={styles.item}>
+          <TextInput
+            style={styles.editInput}
+            placeholder="Item"
+            value={editItem}
+            onChangeText={setEditItem}
+          />
+          <TextInput
+            style={styles.editInput}
+            placeholder="Qtd"
+            value={editQuantidade}
+            onChangeText={setEditQuantidade}
+            keyboardType="numeric"
+          />
+          <Button title="Salvar" onPress={() => updateCompra(compra.id)} />
         </View>
-    )
-  }else{
-    // esta sendo editado
-    return (
-      <View style={styles.item}>
-        <TextInput
-        style={styles.editInput}
-        onChangeText={setEditItemText}
-        value={editItemText}
-        autoFocus
-        />
-        <Button title='Update' onPress={() => updateItem(item.id)}></Button>
-      </View>
-    );
-  }
+      );
+    }
+  };
 
-}
-
-  
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Lista de Compras</Text>
       <TextInput
         style={styles.input}
-        value={text}
-        onChangeText={setText}
-        placeholder='Enter text item' 
+        placeholder="Item"
+        value={item}
+        onChangeText={setItem}
       />
-      <Button 
-        title='Add Item'
-        onPress={addItem}
+      <TextInput
+        style={styles.input}
+        placeholder="Quantidade"
+        value={quantidade}
+        onChangeText={setQuantidade}
+        keyboardType="numeric"
       />
+      <Button title="Adicionar" onPress={addCompra} />
       <FlatList
-        data={items}
+        data={compras}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         style={styles.list}
-        />
-      <Text style={styles.text}>Olá App React Native - Atualiza!</Text>
-      <Image 
-        source={{uri: "https://picsum.photos/200"}}
-        style={{width: 200, height: 200}}
       />
       <StatusBar style="auto" />
-      {/* <Text style={styles.text}>Counter: {counter}</Text>
-
-      <View style={styles.buttonContainer}>
-        <Button title='Increment' onPress={incrementCounter} />
-        <Button title='Decrement' onPress={decrementCounter} />
-      </View> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#f0ddee"
-  },
-  text: {
-    fontSize: 24,
-  },
-  buttonContainer: {
-    flexDirection: 'row'
-  },
+  container: { flex: 1, padding: 20, marginTop: 50, backgroundColor: '#FFF8DC' }, // fundo creme
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, color: '#333' },
   input: {
-    height: 40,
-    backgroundColor: "#CBC3E3",
-    borderColor: 'black',
     borderWidth: 1,
+    borderColor: '#aaa',
+    padding: 10,
     marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  list: {
-    marginTop: 20,
+    borderRadius: 5,
+    backgroundColor: '#FFF'
   },
   item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+    backgroundColor: '#E6F7FF',
     padding: 10,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 5,
+    marginBottom: 10,
+    borderRadius: 5
   },
-  itemText: {
-    flex: 1,
-    marginRight: 10,
-  },
+  itemText: { fontSize: 16, color: '#333' },
   buttons: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10
   },
   editInput: {
-    flex: 1,
-    marginRight: 10,
-    borderColor: 'pink',
     borderWidth: 1,
-    paddingHorizontal: 10,
+    borderColor: '#aaa',
+    padding: 8,
+    marginBottom: 5,
+    marginRight: 5,
+    borderRadius: 5,
+    backgroundColor: '#FFF'
   }
-
 });
