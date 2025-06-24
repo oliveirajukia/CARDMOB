@@ -63,14 +63,40 @@
   ],
   "compras": [
     {
-      "id": "c74a",
-      "item": "uva",
-      "quantidade": 45
-    },
-    {
       "id": "ec19",
       "item": "ovo",
       "quantidade": 49
+    },
+    {
+      "id": "1d45",
+      "item": "maça",
+      "quantidade": 1
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Brigadeiro",
+      "description": "Doce de chocolate",
+      "price": 3.5
+    },
+    {
+      "id": "f4b2",
+      "name": "brownie",
+      "description": "suculento e delicioso",
+      "price": 12
+    },
+    {
+      "id": "5735",
+      "name": "Pave de Nozes",
+      "description": "Um maravilhoso e crocante pave com nozes naturais",
+      "price": 27
+    },
+    {
+      "id": "002f",
+      "name": "coxinha",
+      "description": "coxinha doce de morango com chocolate",
+      "price": 23
     }
   ]
 }
