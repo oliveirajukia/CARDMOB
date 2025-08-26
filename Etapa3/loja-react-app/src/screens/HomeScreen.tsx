@@ -1,9 +1,11 @@
 import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
+import { useAuth } from "../contexts/AuthContext";
 
 function HomeScreen({ navigation }: any) {
   const { theme, toggleTheme } = useTheme();
+  const { login } = useAuth();
   
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -23,6 +25,7 @@ function HomeScreen({ navigation }: any) {
       />
 
       <Button title="Login" onPress={ () => navigation.navigate('Login') } />
+      <Button title="Fake Login" onPress={ () => login('fake_token') } />
 
     </View>
   );
