@@ -1,5 +1,5 @@
 import React, { use, useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text } from "react-native";
+import { View, TextInput, Button, StyleSheet, Text, SafeAreaView } from "react-native";
 
 
 import { fakeLogin } from "../services/authService";
@@ -25,7 +25,8 @@ const handleLogin = async () => {
   }
  
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View>
       <Text>Email:</Text>
       <TextInput
         style={styles.input}
@@ -57,7 +58,7 @@ const handleLogin = async () => {
 
 
     </View>
-   
+   </SafeAreaView>
   );
 }  
 
