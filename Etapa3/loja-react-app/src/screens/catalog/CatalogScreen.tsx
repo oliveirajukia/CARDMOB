@@ -1,35 +1,51 @@
-import React, { useContext } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import { View, Text, FlatList, StyleSheet} from 'react-native';
 
 import CatalogCard from "./CatalogCard";
 
-// Todo: importar o serviço de recuperação do catalog
+import { getCatalog } from '../../services/catalogService'; 
 
-const CatalogScreen = ({ navigation }: any) => {
+const CatalogScreen = ({navigation} : any) => {
+    const [catalog, setCatalog] = useState<any[]>([]); 
 
-  const handleBuyPress = (product: any) => {
-    // 1 - Adicionar ao carrinho
-    // 2 - Ir para a tela do carrinho
-    console.log(product);
-  };
+    
+    useEffect(() => {
+        const fetchCatalog = async () => {
+            try {
+                const data = await getCatalog();
+                setCatalog(data);
+            }
+            catch (error) {
+                console.error('Erro ao buscar o catálogo:', error);
+            }
+        };
+        fetchCatalog();
+        console.log(catalog);
+    }, []);
 
-  const renderItem = ({ product }: any) => (
-    <CatalogCard
-      product={product}
-      onBuyPress={() => handleBuyPress(product)}
-    />
-  );
+    const handleBuyPress = (product : any) => {
+        // 1 - Adicionar ao carrinho
+        // 2 - Ir para a tela do carrinho
+        console.log(product);
+    };
+
+    const renderItem = ({ item }: any) => ( 
+        <CatalogCard 
+            product={item} 
+            onBuyPress={() => handleBuyPress(item)} 
+        />
+    );
 
     return (
         <View style={styles.container}>
-            <FlatList
-                data={[]}
+            <Text>Menu</Text>
+            <FlatList 
+                data={catalog} 
                 renderItem={renderItem}
-                keyExtractor={(item: any) => item.id}
+                keyExtractor={(item: any) => item.id.toString()} 
             />
         </View>
     );
-
 };
 
 export default CatalogScreen;
@@ -40,4 +56,4 @@ const styles = StyleSheet.create({
         padding: 15,
         backgroundColor: '#F8F8F8',
     }
-})
+});
