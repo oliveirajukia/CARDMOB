@@ -4,15 +4,15 @@ import { View, Text, FlatList, StyleSheet} from 'react-native';
 import CatalogCard from "./CatalogCard";
 
 // Todo: importar o serviço de recuperação do catalog
-import { getCatalog } from '../../services/catalogService'; 
+import { getCatalog } from '../../services/catalogService'; // novo
 
 import { useShop } from "../../contexts/ShopContext";
 
 const CatalogScreen = ({navigation} : any) => {
-    const [catalog, setCatalog] = useState<any[]>([]); 
+    const [catalog, setCatalog] = useState<any[]>([]); // novo
     const { addToCart } = useShop();
 
-    
+    // bloco novo
     useEffect(() => {
         const fetchCatalog = async () => {
             try {
@@ -34,10 +34,10 @@ const CatalogScreen = ({navigation} : any) => {
         console.log(product);
     };
 
-    const renderItem = ({ item }: any) => ( 
+    const renderItem = ({ item }: any) => ( // alterado
         <CatalogCard 
-            product={item} 
-            onBuyPress={() => handleBuyPress(item)}
+            product={item} // alterado
+            onBuyPress={() => handleBuyPress(item)} // alterado
         />
     );
 
@@ -45,9 +45,9 @@ const CatalogScreen = ({navigation} : any) => {
         <View style={styles.container}>
             <Text>Menu</Text>
             <FlatList 
-                data={catalog} 
+                data={catalog} // alterado
                 renderItem={renderItem}
-                keyExtractor={(item: any) => item.id.toString()} 
+                keyExtractor={(item: any) => item.id.toString()} // alterado
             />
         </View>
     );
