@@ -23,4 +23,5 @@ export type AuthStackParamList = {
   Tabs: NavigatorScreenParams<AuthTabParamList>;
   Details: { itemId: number};
   Checkout: undefined;
+  OrderInfo: undefined;
 }

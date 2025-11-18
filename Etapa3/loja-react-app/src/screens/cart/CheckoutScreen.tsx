@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import {
+import { 
     View,
     Text,
     TextInput,
@@ -10,24 +10,15 @@ import {
     Button,
 } from "react-native";
 
-
 import { useShop } from "../../contexts/ShopContext";
-
-
 import { postOrder } from "../../services/catalogService";
-import CartItem from "./CartItem";
-
 
 const CheckoutScreen = ( {navigation}: any) => {
-    const { getTotalPrice, clearCart, cartItems,
-        lastOrderInfo } = useShop();
-
-
+    const { getTotalPrice, clearCart, cartItems, lastOrderInfo } = useShop();
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
     const [customer, setCustomer] = useState('');
     const [paymentOption, setPaymentOption] = useState('');
-
 
     const confirmOrder = async () => {
         const customerInfo = {
@@ -35,20 +26,17 @@ const CheckoutScreen = ( {navigation}: any) => {
             customerPhone: phone,
             customerAddress: address,
         }
-        // enviar para o backend
+        // enviar para o backend 
         // todo: implementar o serviço de "checkout"
-        const orderInfo = await postOrder(customerInfo,
-        cartItems);
-        alert('Pedido confirmado!');
+        const orderInfo = await postOrder(customerInfo, cartItems);
         lastOrderInfo(orderInfo);
+        alert('Pedido confirmado!');
         clearCart();
         console.log(customerInfo);
         // navigation.navigate('Catalog');
-        navigation.replace('Tabs', {screen: 'Catalog'});
-
-
+        // navigation.replace('Tabs', {screen: 'Catalog'});
+        navigation.navigate('OrderInfo');
     }
-
 
     return (
         <KeyboardAvoidingView
@@ -61,15 +49,15 @@ const CheckoutScreen = ( {navigation}: any) => {
                     placeholder="Telefone"
                     value={phone}
                     onChangeText={setPhone}
-                    keyboardType="phone-pad"
+                    keyboardType="phone-pad" 
                 />
-                <TextInput
+                <TextInput 
                     style={styles.input}
                     placeholder="Nome completo"
                     value={customer}
                     onChangeText={setCustomer}
                 />
-                <TextInput
+                <TextInput 
                     style={styles.input}
                     placeholder="Endereço de entrega"
                     value={address}
@@ -77,17 +65,17 @@ const CheckoutScreen = ( {navigation}: any) => {
                 />
                 <Text style={styles.label}>Forma de pagamento</Text>
                 <View style={styles.paymentOption}>
-                    <Button
+                    <Button 
                         title="PIX"
                         onPress={() => setPaymentOption('PIX')}
                         color={paymentOption === 'PIX' ? '#007BFF' : '#DDD'}
                     />
-                    <Button
+                    <Button 
                         title="Cartão de débito"
                         onPress={() => setPaymentOption('Cartão de débito')}
                         color={paymentOption === 'Cartão de débito' ? '#007BFF' : '#DDD'}
                     />
-                    <Button
+                    <Button 
                         title="Cartão de crédito"
                         onPress={() => setPaymentOption('Cartão de crédito')}
                         color={paymentOption === 'Cartão de crédito' ? '#007BFF' : '#DDD'}
@@ -95,21 +83,18 @@ const CheckoutScreen = ( {navigation}: any) => {
                 </View>
                 <Text style={styles.selectedPayment}>Pagar com: {paymentOption}</Text>
                 <Text style={styles.totalText}>Total a pagar: R$ {getTotalPrice()}</Text>
-                <Button
+                <Button 
                     title="Confirmar pedido"
                     onPress={confirmOrder}
                     color='#28A275'
                 />
             </ScrollView>
 
-
         </KeyboardAvoidingView>
     );
 
-
 }
 export default CheckoutScreen;
-
 
 const styles = StyleSheet.create({
     container: {
