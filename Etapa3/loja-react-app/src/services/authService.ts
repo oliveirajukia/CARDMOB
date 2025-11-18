@@ -34,15 +34,15 @@ export async function requestLogin(email: string, password: string): Promise<str
     }
 }
 
-export async function requestRegister(name: string,email: string, password: string): Promise<string> {
+// dupliquei o requestLogin, renomeie e inclui o name nos argumentos.
+export async function requestRegister(name: string, email: string, password: string): Promise<string> {
     try {
-        // alterado 
-        const response = await fetch(`${apiUrl}/api/users`, {
+        const response = await fetch(`${apiUrl}/api/users`, { // modifiquei o endpoint
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({name ,email, password}),
+            body: JSON.stringify({name, email, password}), // inclui o name
         });
         const data = await response.json();
         const jwt = data.accessToken;
@@ -56,3 +56,17 @@ export async function requestRegister(name: string,email: string, password: stri
     }
 }
 
+export async function getTokenData(token: string | null): Promise<any[]> {
+    try {
+        if (!token) {
+            return [];
+        }
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(atob(base64));
+        return payload;
+    } catch (error) {
+        console.error(error);
+        return Promise.reject('Token inválido.');
+    }
+}
