@@ -1,60 +1,61 @@
-import React, { createContext, useState, useEffect, useContext} from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from "react"; // modificado
+import { View, Text, Button, StyleSheet, Image } from "react-native"; // modificado
 
-import { getTokenData } from "../services/authService"; // novo.
+import { useTheme } from '../../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
 
-type AuthContextType = {
-    user: { token: string } | null;
-    login: (token: string) => Promise<void>;
-    logout: () => Promise<void>;
-    loading: boolean;
-    getUserDataFromToken: (token: string | null) => Promise<any[]>; // novo
-    userData: Promise<any[]>; // novo
-};
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+import { requestProfileById } from "../../services/profileService"; // novo 
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    // Lógica do context provider.
-    const [user, setUser] = useState<{ token: string } | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [userData, setUserData] = useState<any[]>([]); // novo
+function ProfileScreen({ navigation }: any) {
+    const { theme, toggleTheme } = useTheme();
+    const { logout, userData } = useAuth();
+    const [user, setUser] = useState({}); // novo
 
-    useEffect( () => {
-        const loadUser = async () => {
-            const token = await AsyncStorage.getItem('token');
-            if (token) {
-                setUser({ token });
+    // novo
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                console.log(userData); // novo
+                const user = await requestProfileById(userData?.id); // correção
+                console.log(user);
+                setUser(user);
+                console.log('Carregou o usuário!');
             }
-            setLoading(false);
-        };
-        loadUser();
-        getUserDataFromToken(); // novo
+            catch (error) {
+                console.error('Erro ao carregar o perfil do usuário:', error);
+            }
+        }
+        fetchProfile();
     }, []);
 
-    const login = async (token: string) => {
-        await AsyncStorage.setItem('token', token);
-        setUser({token});
-    }
-
-    const logout = async () => {
-        await AsyncStorage.removeItem('token');
-        setUser(null);
-    }
-
-    // novo callback.
-    const getUserDataFromToken = async () => {
-        const token = await AsyncStorage.getItem('token');
-        const tokenData = getTokenData(token);
-        setUserData(tokenData);
-    }
-
     return (
-        <AuthContext 
-            value={{ user, login, logout, loading, userData }}
-        >
-            {children}
-        </AuthContext>
-    );
-};
+        <View style={[styles.container, {backgroundColor: theme.colors.background}]}>
+            <Text style={{ color: theme.colors.text, marginBottom: theme.spacing(1) }}>
+                Profile Screen
+            </Text>
+            <View>
+                <Image source={{ uri: user.image }} style={styles.image}/>
+            </View>
+            <Text style={styles.text}>{user.name}</Text>
+            <Text style={styles.text}>{user.email}</Text>
 
-export const useAuth = () => useContext(AuthContext);
+            <Button title="Alternar Tema" color={theme.colors.primary} onPress={toggleTheme}/>
+            <Button title="Ir para Detalhes" onPress={ () => navigation.navigate('Details')} />
+            <Button title="Sair" onPress={logout}/>
+        </View>
+    );
+}
+export default ProfileScreen;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    image: { // novo
+        height: 100,
+        width: 100,
+    },
+    text: { fontSize: 14} // novo
+});
